@@ -4,7 +4,7 @@ import dedent from "dedent";
 import { createAI, createStreamableUI, getMutableAIState } from "ai/rsc";
 import OpenAI from "openai";
 
-import { spinner, BotMessage } from "@/components/llm-stocks";
+import { spinner, BotMessage, SystemMessage } from "@/components/llm-stocks";
 
 import { runAsyncFnWithoutBlocking, sleep } from "@/lib/utils";
 import { setupFunctionCalling } from "ai-actions";
@@ -143,14 +143,21 @@ export async function submitUserMessageSuperMode(
       functionAsString += "\n\n" + systemFunctionCode;
     }
 
-    // extract the javascript code
-    let javascriptCode = completion.choices[0].message.content || "";
-    javascriptCode = javascriptCode.split("```javascript")[1].split("```")[0];
+    const finish = async () => {
+      reply.done();
+      aiState.done([...aiState.get()]);
+    };
 
-    // create the main function wrapper
-    functionAsString +=
-      "\n\n" +
-      dedent`
+    // call the function
+    try {
+      // extract the javascript code
+      let javascriptCode = completion.choices[0].message.content || "";
+      javascriptCode = javascriptCode.split("```javascript")[1].split("```")[0];
+
+      // create the main function wrapper
+      functionAsString +=
+        "\n\n" +
+        dedent`
         const main = async () => {
           ${javascriptCode}
 
@@ -160,27 +167,24 @@ export async function submitUserMessageSuperMode(
         main();
       `;
 
-    const finish = async () => {
-      // sleep for 30 seconds
-      // this is a bug, for some reason after `done` gets called everything
-      // that was appended disappears. Not sure but adding a 30 second sleep
-      // is good enough to showcase the demo.
-      await sleep(30000);
-      reply.done(<BotMessage className="items-center">Done!</BotMessage>);
-      aiState.done([...aiState.get()]);
-    };
+      // setup the function
+      const callFunction = new Function(
+        "functionCallHandler",
+        "finish",
+        `${functionAsString}`
+      );
 
-    console.log(functionAsString);
-
-    // setup the function
-    const callFunction = new Function(
-      "functionCallHandler",
-      "finish",
-      `${functionAsString}`
-    );
-
-    // call the function
-    await callFunction(functionCallHandler, finish);
+      reply.update(<SystemMessage>Executing parallel functions</SystemMessage>);
+      await callFunction(functionCallHandler, finish);
+    } catch (error) {
+      reply.update(
+        <BotMessage className="items-center text-red-500">
+          Error executing parallel functions{" "}
+          {error instanceof Error ? error.message : "unknown error"}
+        </BotMessage>
+      );
+      finish();
+    }
   });
 
   return {
