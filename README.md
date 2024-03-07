@@ -11,6 +11,12 @@ The three benefits of this fork are:
 
 `ai-actions` still does not have up to date documentation, feel free to DM me on Twitter/X if you need help or have questions.
 
+## render vs createStreamableUI
+
+There are two Action Registries in this repo, one relies on the `render` method and one relies on the `createStreamableUI` method. I did both on purpose to show how to use both methods.
+
+Hopefully the examples are clear enough, but TLDR is you can `setRenderFunction` on an action or you can just pass the result of `createStreamableUI` to the `setActionFunction` method as context. Contact me if you have any questions or suggestions.
+
 <a href="https://sdk.vercel.ai/rsc-demo">
   <img alt="Generative UI Demo" src="https://github.com/vercel/ai/assets/4060187/f21fa839-c710-4f09-9af4-2056f603d98f">
   <h1 align="center">Generative UI Demo</h1>
