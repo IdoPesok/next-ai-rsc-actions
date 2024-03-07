@@ -82,7 +82,6 @@ export async function submitUserMessageSuperMode(
 
         Instructions:
         ${functions.map((fn) => `${StreamableActionsRegistry[fn.name as TStreamableActionId].getMetadata().systemMessage}`).join("\n")}
-        If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
 
         Besides that, you can also chat with users and do some calculations if needed.
 
