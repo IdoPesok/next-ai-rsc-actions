@@ -1,13 +1,15 @@
 ## Important
 
 This is a fork of the `next-ai-rsc` example by
-Ido Pesok ([@ido_pesok](https://twitter.com/shadcn))
+Ido Pesok ([@ido_pesok](https://twitter.com/shadcn)) - [Energize AI](https://spark.energize.ai)
 
 The three benefits of this fork are:
 
 - Uses `ai-actions` to store the tools
 - @ to select tools
 - Code interpreter with tools
+
+`ai-actions` still does not have up to date documentation, feel free to DM me on Twitter/X if you need help or have questions.
 
 <a href="https://sdk.vercel.ai/rsc-demo">
   <img alt="Generative UI Demo" src="https://github.com/vercel/ai/assets/4060187/f21fa839-c710-4f09-9af4-2056f603d98f">
