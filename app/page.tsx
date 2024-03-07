@@ -1,6 +1,6 @@
 import Chat from "@/components/chat";
-import { ClientSafeActionsRegistry } from "@/lib/shared/action-types";
-import { StreamableActionsRegistry } from "@/lib/streamable-ui-registry";
+import { ClientSafeActionsRegistry } from "@/ai/shared/action-types";
+import { StreamableActionsRegistry } from "@/ai/streamable-ui-registry";
 
 export default function Page() {
   const actions = Object.entries(StreamableActionsRegistry).reduce(

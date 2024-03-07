@@ -10,8 +10,8 @@ import { runAsyncFnWithoutBlocking, sleep } from "@/lib/utils";
 import { setupFunctionCalling } from "ai-actions";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { AI } from "@/ai";
-import { StreamableActionsRegistry } from "@/lib/streamable-ui-registry";
-import { TStreamableActionId } from "@/lib/streamable-ui-registry/types";
+import { StreamableActionsRegistry } from "@/ai/streamable-ui-registry";
+import { TStreamableActionId } from "@/ai/streamable-ui-registry/types";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",

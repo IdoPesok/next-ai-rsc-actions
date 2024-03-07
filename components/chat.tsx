@@ -22,8 +22,8 @@ import { EmptyScreen } from "@/components/empty-screen";
 import { AI } from "@/ai";
 import { Input } from "./ui/input";
 import { cn, sleep } from "@/lib/utils";
-import { TActionRegistryMetadata } from "@/lib/shared/actions-metadata";
-import { ClientSafeActionsRegistry } from "@/lib/shared/action-types";
+import { TActionRegistryMetadata } from "@/ai/shared/actions-metadata";
+import { ClientSafeActionsRegistry } from "@/ai/shared/action-types";
 import { usePathname } from "next/navigation";
 
 export default function Chat({

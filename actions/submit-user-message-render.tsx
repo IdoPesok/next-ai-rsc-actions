@@ -1,6 +1,6 @@
 import { AI } from "@/ai";
-import { RenderedActionsRegistry } from "@/lib/render-registry";
-import { TRenderedActionId } from "@/lib/render-registry/types";
+import { RenderedActionsRegistry } from "@/ai/render-registry";
+import { TRenderedActionId } from "@/ai/render-registry/types";
 import { setupToolCalling } from "ai-actions";
 import { getMutableAIState, render } from "ai/rsc";
 import OpenAI from "openai";

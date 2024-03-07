@@ -8,9 +8,9 @@ import { spinner, BotMessage, SystemMessage } from "@/components/llm-stocks";
 
 import { runOpenAICompletion } from "@/lib/utils";
 import { setupFunctionCalling } from "ai-actions";
-import { TStreamableActionId } from "@/lib/streamable-ui-registry/types";
+import { TStreamableActionId } from "@/ai/streamable-ui-registry/types";
 import { AI } from "@/ai";
-import { StreamableActionsRegistry } from "@/lib/streamable-ui-registry";
+import { StreamableActionsRegistry } from "@/ai/streamable-ui-registry";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
