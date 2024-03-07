@@ -39,7 +39,8 @@ export const getEventsStreamableAction = createStreamableUIAction({
     const { reply, aiState } = context;
     const { events } = input;
 
-    reply.update(
+    const fn = context.mode === "normal" ? reply.update : () => {};
+    fn(
       <BotCard>
         <EventsSkeleton />
       </BotCard>
@@ -47,13 +48,15 @@ export const getEventsStreamableAction = createStreamableUIAction({
 
     await sleep(1000);
 
-    reply.done(
+    const fn2 = context.mode === "normal" ? reply.done : reply.append;
+    fn2(
       <BotCard>
         <Events events={events} />
       </BotCard>
     );
 
-    aiState.done([
+    const fn3 = context.mode === "normal" ? aiState.done : aiState.update;
+    fn3([
       ...aiState.get(),
       {
         role: "function",

@@ -65,9 +65,4 @@ export const showStockStreamablePriceAction = createStreamableUIAction({
         content: `[Price of ${symbol} = ${price}]`,
       },
     ]);
-
-    if (context.mode === "superMode") {
-      // sleep a random time between 10 and 20 seconds
-      await sleep(Math.floor(Math.random() * 10) + 10);
-    }
   });

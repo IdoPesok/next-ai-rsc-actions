@@ -34,7 +34,8 @@ export const listStocksStreamableAction = createStreamableUIAction({
   .setActionFunction(async ({ input, context }) => {
     const { reply, aiState } = context;
 
-    reply.update(
+    const fn = context.mode === "normal" ? reply.update : () => {};
+    fn(
       <BotCard>
         <StocksSkeleton />
       </BotCard>
@@ -42,13 +43,15 @@ export const listStocksStreamableAction = createStreamableUIAction({
 
     await sleep(1000);
 
-    reply.done(
+    const fn2 = context.mode === "normal" ? reply.done : reply.append;
+    fn2(
       <BotCard>
         <Stocks stocks={input.stocks} />
       </BotCard>
     );
 
-    aiState.done([
+    const fn3 = context.mode === "normal" ? aiState.done : aiState.update;
+    fn3([
       ...aiState.get(),
       {
         role: "function",

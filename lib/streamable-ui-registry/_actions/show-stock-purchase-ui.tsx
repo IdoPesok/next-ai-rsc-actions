@@ -40,9 +40,15 @@ export const showStockPriceUIStreamableAction = createStreamableUIAction({
     const { reply, aiState } = context;
     const { symbol, price, numberOfShares } = input;
 
+    // we want to use done in normal mode, but append in super mode
+    const fn = context.mode === "normal" ? reply.done : reply.append;
+
+    // we want to use done in normal mode, but update in super mode
+    const fn2 = context.mode === "normal" ? aiState.done : aiState.update;
+
     if (numberOfShares <= 0 || numberOfShares > 1000) {
-      reply.done(<BotMessage>Invalid amount</BotMessage>);
-      aiState.done([
+      fn(<BotMessage>Invalid amount</BotMessage>);
+      fn2([
         ...aiState.get(),
         {
           role: "function",
@@ -53,8 +59,6 @@ export const showStockPriceUIStreamableAction = createStreamableUIAction({
       return;
     }
 
-    // we want to use done in normal mode, but append in super mode
-    const fn = context.mode === "normal" ? reply.done : reply.append;
     fn(
       <>
         <BotMessage>
@@ -73,8 +77,6 @@ export const showStockPriceUIStreamableAction = createStreamableUIAction({
       </>
     );
 
-    // we want to use done in normal mode, but update in super mode
-    const fn2 = context.mode === "normal" ? aiState.done : aiState.update;
     fn2([
       ...aiState.get(),
       {
