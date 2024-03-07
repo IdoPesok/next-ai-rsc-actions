@@ -6,7 +6,7 @@ import type { AI } from "../../ai";
 
 export function Stocks({ stocks }: { stocks: any[] }) {
   const [, setMessages] = useUIState<typeof AI>();
-  const { submitUserMessage } = useActions<typeof AI>();
+  const { submitUserMessageStreamable } = useActions<typeof AI>();
 
   return (
     <div className="flex flex-col gap-2 pb-4 mb-4 overflow-y-scroll text-sm sm:flex-row">
@@ -15,7 +15,9 @@ export function Stocks({ stocks }: { stocks: any[] }) {
           key={stock.symbol}
           className="flex flex-row gap-2 p-2 text-left rounded-lg cursor-pointer bg-zinc-900 hover:bg-zinc-800 sm:w-52"
           onClick={async () => {
-            const response = await submitUserMessage(`View ${stock.symbol}`);
+            const response = await submitUserMessageStreamable(
+              `View ${stock.symbol}`
+            );
             setMessages((currentMessages) => [...currentMessages, response]);
           }}
         >

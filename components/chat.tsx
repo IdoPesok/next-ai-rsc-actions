@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Lightbulb, WrenchIcon } from "lucide-react";
 
 import { useUIState, useActions } from "ai/rsc";
@@ -224,21 +224,12 @@ export default function Chat({
               const sa =
                 selectedActions.length > 0 ? selectedActions : undefined;
 
-              let responseMessage = null;
-
-              if (type === "rendered") {
-                // call the rendered actions registry
-                responseMessage = await submitUserMessageRendered(message, sa);
-              } else if (superMode) {
-                // call super mode
-                responseMessage = await submitUserMessageSuperMode(message, sa);
-              } else {
-                // call streamable
-                responseMessage = await submitUserMessageStreamable(
-                  message,
-                  sa
-                );
-              }
+              let responseMessage =
+                type === "rendered"
+                  ? await submitUserMessageRendered(message, sa)
+                  : superMode
+                    ? await submitUserMessageSuperMode(message, sa)
+                    : await submitUserMessageStreamable(message, sa);
 
               setMessages((currentMessages) => [
                 ...currentMessages,
@@ -279,27 +270,12 @@ export default function Chat({
                   const sa =
                     selectedActions.length > 0 ? selectedActions : undefined;
 
-                  let responseMessage = null;
-
-                  if (type === "rendered") {
-                    // call the rendered actions registry
-                    responseMessage = await submitUserMessageRendered(
-                      value,
-                      sa
-                    );
-                  } else if (superMode) {
-                    // call super mode
-                    responseMessage = await submitUserMessageSuperMode(
-                      value,
-                      sa
-                    );
-                  } else {
-                    // call streamable
-                    responseMessage = await submitUserMessageStreamable(
-                      value,
-                      sa
-                    );
-                  }
+                  let responseMessage =
+                    type === "rendered"
+                      ? await submitUserMessageRendered(value, sa)
+                      : superMode
+                        ? await submitUserMessageSuperMode(value, sa)
+                        : await submitUserMessageStreamable(value, sa);
 
                   setMessages((currentMessages) => [
                     ...currentMessages,
