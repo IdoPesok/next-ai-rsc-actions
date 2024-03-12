@@ -13,30 +13,25 @@ export const showStockPriceUIStreamableAction = createStreamableUIAction({
       "If the user requests purchasing a stock, call `showStockPurchaseUI` to show the purchase UI.",
   },
 })
-  .setInputSchema(
-    z
-      .object({
-        symbol: z
-          .string()
-          .describe(
-            "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
-          ),
-        price: z.number().describe("The price of the stock."),
-        numberOfShares: z
-          .number()
-          .default(100)
-          .describe(
-            "The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it."
-          ),
-      })
-      .describe(
-        "Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency."
-      )
+  .describe(
+    "Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency."
   )
-  .setActionType("SERVER")
-  .setOutputAsVoid()
-  .setAuthType("None")
-  .setActionFunction(async ({ input, context }) => {
+  .input({
+    symbol: z
+      .string()
+      .default("DOGE")
+      .describe(
+        "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
+      ),
+    price: z.number().default(100).describe("The price of the stock."),
+    numberOfShares: z
+      .number()
+      .default(100)
+      .describe(
+        "The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it."
+      ),
+  })
+  .handler(async ({ input, context }) => {
     const { reply, aiState } = context;
     const { symbol, price, numberOfShares } = input;
 
@@ -69,8 +64,8 @@ export const showStockPriceUIStreamableAction = createStreamableUIAction({
         </BotMessage>
         <BotCard showAvatar={false}>
           <Purchase
-            defaultAmount={numberOfShares}
-            name={symbol}
+            numberOfShares={numberOfShares}
+            symbol={symbol}
             price={+price}
           />
         </BotCard>

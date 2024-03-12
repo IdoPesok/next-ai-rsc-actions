@@ -4,8 +4,8 @@ import { createAI } from "ai/rsc";
 
 import { confirmPurchase } from "@/actions/confirm-purchase";
 import { submitUserMessageSuperMode } from "@/actions/submit-user-message-super-mode";
-import { submitUserMessageStreamable } from "@/actions/submit-user-message-create-streamable-ui";
-import { submitUserMessageRendered } from "@/actions/submit-user-message-render";
+import { submitUserMessageWithStreamable } from "@/actions/submit-user-message-with-streamable";
+import { submitUserMessageWithRender } from "@/actions/submit-user-message-with-render";
 
 // Define necessary types and create the AI.
 
@@ -23,10 +23,10 @@ const initialUIState: {
 
 export const AI = createAI({
   actions: {
-    submitUserMessageStreamable,
+    submitUserMessageWithStreamable,
     confirmPurchase,
     submitUserMessageSuperMode,
-    submitUserMessageRendered,
+    submitUserMessageWithRender,
   },
   initialUIState,
   initialAIState,

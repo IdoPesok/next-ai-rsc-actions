@@ -36,8 +36,8 @@ dependencies:
     specifier: ^3.0.6
     version: 3.0.6(react@18.2.0)(solid-js@1.8.15)(svelte@4.2.12)(vue@3.4.21)(zod@3.22.4)
   ai-actions:
-    specifier: ^0.10.0
-    version: 0.10.0(@types/react@18.2.63)(postcss@8.4.35)(react@18.2.0)(typescript@5.3.3)(zod@3.22.4)
+    specifier: ^0.11.1
+    version: 0.11.1(@types/react@18.2.63)(postcss@8.4.35)(react@18.2.0)(typescript@5.3.3)(zod@3.22.4)
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -1525,8 +1525,8 @@ packages:
       humanize-ms: 1.2.1
     dev: false
 
-  /ai-actions@0.10.0(@types/react@18.2.63)(postcss@8.4.35)(react@18.2.0)(typescript@5.3.3)(zod@3.22.4):
-    resolution: {integrity: sha512-OJtKnJklLMKg3u43Hhe3k7QTImCExdCrS8Alqn0flOyt5QEzr0PGTsfcY/hSyNbdxtk3phVWWFnWmX/evfZdmw==}
+  /ai-actions@0.11.1(@types/react@18.2.63)(postcss@8.4.35)(react@18.2.0)(typescript@5.3.3)(zod@3.22.4):
+    resolution: {integrity: sha512-1U9jQF0Pk5GPYobEBMzakGLH0Dnk86YhTDbqTL7BRuq08MMi300upU1xReSLDipmlqhlkbz+oJ5KVmIfcpU+Hw==}
     dependencies:
       openai: 4.28.4
       tsup: 8.0.2(postcss@8.4.35)(typescript@5.3.3)

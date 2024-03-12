@@ -16,25 +16,20 @@ export const showStockStreamablePriceAction = createStreamableUIAction({
       "If the user wants just the price, call `showStockPrice` to show the price.",
   },
 })
-  .setInputSchema(
-    z
-      .object({
-        symbol: z
-          .string()
-          .describe(
-            "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
-          ),
-        price: z.number().describe("The price of the stock."),
-        delta: z.number().describe("The change in price of the stock"),
-      })
-      .describe(
-        "Get the current stock price of a given stock or currency. Use this to show the price to the user."
-      )
+  .describe(
+    "Get the current stock price of a given stock or currency. Use this to show the price to the user."
   )
-  .setActionType("SERVER")
-  .setOutputAsVoid()
-  .setAuthType("None")
-  .setActionFunction(async ({ input, context }) => {
+  .input({
+    symbol: z
+      .string()
+      .default("DOGE")
+      .describe(
+        "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
+      ),
+    price: z.number().describe("The price of the stock.").default(100),
+    delta: z.number().describe("The change in price of the stock").default(1),
+  })
+  .handler(async ({ input, context }) => {
     const { reply, aiState } = context;
     const { symbol, price, delta } = input;
 
@@ -51,7 +46,7 @@ export const showStockStreamablePriceAction = createStreamableUIAction({
     const fn2 = context.mode === "normal" ? reply.done : reply.append;
     fn2(
       <BotCard>
-        <Stock name={symbol} price={price} delta={delta} />
+        <Stock {...input} />
       </BotCard>
     );
 

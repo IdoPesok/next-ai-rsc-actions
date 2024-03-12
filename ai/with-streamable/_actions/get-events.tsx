@@ -15,27 +15,19 @@ export const getEventsStreamableAction = createStreamableUIAction({
     systemMessage: "If you want to show events, call `getEvents`.",
   },
 })
-  .setInputSchema(
-    z
-      .object({
-        events: z.array(
-          z.object({
-            date: z
-              .string()
-              .describe("The date of the event, in ISO-8601 format"),
-            headline: z.string().describe("The headline of the event"),
-            description: z.string().describe("The description of the event"),
-          })
-        ),
-      })
-      .describe(
-        "List funny imaginary events between user highlighted dates that describe stock activity."
-      )
+  .describe(
+    "List funny imaginary events between user highlighted dates that describe stock activity."
   )
-  .setActionType("SERVER")
-  .setOutputAsVoid()
-  .setAuthType("None")
-  .setActionFunction(async ({ input, context }) => {
+  .input({
+    events: z.array(
+      z.object({
+        date: z.string().describe("The date of the event, in ISO-8601 format"),
+        headline: z.string().describe("The headline of the event"),
+        description: z.string().describe("The description of the event"),
+      })
+    ),
+  })
+  .handler(async ({ input, context }) => {
     const { reply, aiState } = context;
     const { events } = input;
 

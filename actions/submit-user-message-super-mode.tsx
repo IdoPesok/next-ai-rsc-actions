@@ -10,8 +10,8 @@ import { runAsyncFnWithoutBlocking, sleep } from "@/lib/utils";
 import { setupFunctionCalling } from "ai-actions";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { AI } from "@/ai";
-import { StreamableActionsRegistry } from "@/ai/streamable-ui-registry";
-import { TStreamableActionId } from "@/ai/streamable-ui-registry/types";
+import { ActionsRegistryWithStreamable } from "@/ai/with-streamable";
+import { TActionWithStreamableId } from "@/ai/with-streamable/types";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
@@ -39,7 +39,7 @@ const openai = new OpenAI({
 
 export async function submitUserMessageSuperMode(
   content: string,
-  actionIds?: TStreamableActionId[]
+  actionIds?: TActionWithStreamableId[]
 ) {
   "use server";
 
@@ -59,7 +59,7 @@ export async function submitUserMessageSuperMode(
 
   // setup function calling
   const { functions, functionCallHandler } = setupFunctionCalling(
-    StreamableActionsRegistry,
+    ActionsRegistryWithStreamable,
     {
       inArray: actionIds, // only call the functions that are in the array (if any)
       context: {
@@ -81,7 +81,7 @@ export async function submitUserMessageSuperMode(
         ${functions.map((fn) => `${JSON.stringify(fn)}`).join("\n---\n")}
 
         Instructions:
-        ${functions.map((fn) => `${StreamableActionsRegistry[fn.name as TStreamableActionId].getMetadata().systemMessage}`).join("\n")}
+        ${functions.map((fn) => `${ActionsRegistryWithStreamable[fn.name as TActionWithStreamableId].metadata.systemMessage}`).join("\n")}
 
         Besides that, you can also chat with users and do some calculations if needed.
 
@@ -97,7 +97,7 @@ export async function submitUserMessageSuperMode(
     {
       role: "assistant",
       content: dedent`
-        In order to show the stock prices we can do this by calling the \`${StreamableActionsRegistry["showStockPrice"].getFunctionName()}\` function with the correct arguments
+        In order to show the stock prices we can do this by calling the \`${ActionsRegistryWithStreamable["showStockPrice"].functionName}\` function with the correct arguments
         ${"```"}javascript
         const symbols = ["AAPL", "DOGE", "BTC"];
 

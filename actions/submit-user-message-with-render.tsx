@@ -1,6 +1,6 @@
 import { AI } from "@/ai";
-import { RenderedActionsRegistry } from "@/ai/render-registry";
-import { TRenderedActionId } from "@/ai/render-registry/types";
+import { ActionsRegistryWithRender } from "@/ai/with-render";
+import { TActionIdWithRender } from "@/ai/with-render/types";
 import { setupToolCalling } from "ai-actions";
 import { getMutableAIState, render } from "ai/rsc";
 import OpenAI from "openai";
@@ -9,9 +9,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
 });
 
-export async function submitUserMessageRendered(
+export async function submitUserMessageWithRender(
   content: string,
-  actionIds?: TRenderedActionId[]
+  actionIds?: TActionIdWithRender[]
 ) {
   "use server";
 
@@ -42,7 +42,7 @@ export async function submitUserMessageRendered(
       return <div>{content}</div>;
     },
     // now we can just pass our registry to the render function using `toolsWithRender`
-    tools: setupToolCalling(RenderedActionsRegistry, {
+    tools: setupToolCalling(ActionsRegistryWithRender, {
       inArray: actionIds,
       context: {
         aiState,

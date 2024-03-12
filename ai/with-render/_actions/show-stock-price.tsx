@@ -14,33 +14,31 @@ export const showStockPriceRenderedAction = createRenderedAction({
     avatarGradient: "Purple",
   },
 })
-  .setInputSchema(
-    z
-      .object({
-        symbol: z
-          .string()
-          .describe(
-            "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
-          ),
-        price: z.number().describe("The price of the stock."),
-        delta: z.number().describe("The change in price of the stock"),
-      })
-      .describe(
-        "Get the current stock price of a given stock or currency. Use this to show the price to the user."
-      )
+  .describe(
+    "Get the current stock price of a given stock or currency. Use this to show the price to the user."
   )
-  .setActionType("SERVER")
-  .setOutputAsVoid()
-  .setAuthType("None")
-  .setActionFunction(async ({ input, context }) => {
+  .input({
+    symbol: z
+      .string()
+      .default("DOGE")
+      .describe(
+        "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
+      ),
+  })
+  .handler(async ({ input, context }) => {
     console.log("running show stock price");
     await sleep(3000);
     console.log("finished running show stock price");
+
+    return {
+      price: Math.round(Math.random() * 200 + 50),
+      delta: Math.round(Math.random() * 40 - 20),
+    };
   })
-  .setRenderFunction(async function* ({ actionFunction, ...rest }) {
+  .render(async function* ({ handler, ...rest }) {
     const { input, context } = rest;
     const { aiState } = context;
-    const { symbol, price, delta } = input;
+    const { symbol } = input;
 
     yield (
       <BotCard>
@@ -48,9 +46,10 @@ export const showStockPriceRenderedAction = createRenderedAction({
       </BotCard>
     );
 
-    // we can call the action function from here
+    // we can call the handler from here
     // this is good if you want to keep your UI and action functions separate
-    await actionFunction(rest);
+    // note: we can also just put the "function" code in the render function
+    const { price, delta } = await handler(rest);
 
     aiState.done([
       ...aiState.get(),
@@ -63,7 +62,7 @@ export const showStockPriceRenderedAction = createRenderedAction({
 
     return (
       <BotCard>
-        <Stock name={symbol} price={price} delta={delta} />
+        <Stock {...input} price={price} delta={delta} />
       </BotCard>
     );
   });

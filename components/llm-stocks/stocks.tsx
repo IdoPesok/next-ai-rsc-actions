@@ -3,10 +3,11 @@
 import { useActions, useUIState } from "ai/rsc";
 
 import type { AI } from "../../ai";
+import { TActionInputs } from "@/ai/with-streamable/types";
 
-export function Stocks({ stocks }: { stocks: any[] }) {
+export function Stocks({ stocks }: TActionInputs["listStocks"]) {
   const [, setMessages] = useUIState<typeof AI>();
-  const { submitUserMessageStreamable } = useActions<typeof AI>();
+  const { submitUserMessageWithStreamable } = useActions<typeof AI>();
 
   return (
     <div className="flex flex-col gap-2 pb-4 mb-4 overflow-y-scroll text-sm sm:flex-row">
@@ -15,7 +16,7 @@ export function Stocks({ stocks }: { stocks: any[] }) {
           key={stock.symbol}
           className="flex flex-row gap-2 p-2 text-left rounded-lg cursor-pointer bg-zinc-900 hover:bg-zinc-800 sm:w-52"
           onClick={async () => {
-            const response = await submitUserMessageStreamable(
+            const response = await submitUserMessageWithStreamable(
               `View ${stock.symbol}`
             );
             setMessages((currentMessages) => [...currentMessages, response]);

@@ -15,23 +15,17 @@ export const listStocksStreamableAction = createStreamableUIAction({
       "If the user wants to show trending stocks, call `listStocks`",
   },
 })
-  .setInputSchema(
-    z
-      .object({
-        stocks: z.array(
-          z.object({
-            symbol: z.string().describe("The symbol of the stock"),
-            price: z.number().describe("The price of the stock"),
-            delta: z.number().describe("The change in price of the stock"),
-          })
-        ),
+  .describe("List three imaginary stocks that are trending.")
+  .input({
+    stocks: z.array(
+      z.object({
+        symbol: z.string().describe("The symbol of the stock"),
+        price: z.number().describe("The price of the stock"),
+        delta: z.number().describe("The change in price of the stock"),
       })
-      .describe("List three imaginary stocks that are trending.")
-  )
-  .setActionType("SERVER")
-  .setOutputAsVoid()
-  .setAuthType("None")
-  .setActionFunction(async ({ input, context }) => {
+    ),
+  })
+  .handler(async ({ input, context }) => {
     const { reply, aiState } = context;
 
     const fn = context.mode === "normal" ? reply.update : () => {};

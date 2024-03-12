@@ -7,8 +7,13 @@ import { useResizeObserver } from "usehooks-ts";
 import { useAIState } from "ai/rsc";
 
 import type { AI } from "../../ai";
+import { TActionInputs } from "@/ai/with-streamable/types";
 
-export function Stock({ name = "DOGE", price = 12.34, delta = 1 }) {
+export function Stock({
+  symbol,
+  price,
+  delta,
+}: TActionInputs["showStockPrice"]) {
   const [history, setHistory] = useAIState<typeof AI>();
   const id = useId();
 
@@ -62,7 +67,7 @@ export function Stock({ name = "DOGE", price = 12.34, delta = 1 }) {
           delta > 0 ? "↑" : "↓"
         }`}
       </div>
-      <div className="text-lg text-zinc-300">{name}</div>
+      <div className="text-lg text-zinc-300">{symbol}</div>
       <div className="text-3xl font-bold">${price}</div>
       <div className="mt-1 text-xs text text-zinc-500">
         Closed: Feb 27, 4:59 PM EST

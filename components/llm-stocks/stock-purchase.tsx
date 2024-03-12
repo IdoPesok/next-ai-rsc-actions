@@ -5,16 +5,13 @@ import { useActions, useAIState, useUIState } from "ai/rsc";
 import { formatNumber } from "@/lib/utils";
 
 import type { AI } from "../../ai";
+import { TActionInputs } from "@/ai/with-streamable/types";
 
 export function Purchase({
-  defaultAmount,
-  name,
+  numberOfShares: defaultAmount,
+  symbol: name,
   price,
-}: {
-  defaultAmount?: number;
-  name: string;
-  price: number;
-}) {
+}: TActionInputs["showStockPriceUI"]) {
   const [value, setValue] = useState(defaultAmount || 100);
   const [purchasingUI, setPurchasingUI] = useState<null | React.ReactNode>(
     null

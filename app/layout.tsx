@@ -8,6 +8,7 @@ import "./globals.css";
 import { AI } from "../ai";
 import { Header } from "@/components/header";
 import { Providers } from "@/components/providers";
+import { ActionRegistriesProvider } from "@/ai/provider";
 
 const meta = {
   title: "AI RSC Demo",
@@ -55,21 +56,23 @@ export default function RootLayout({
         className={`font-sans antialiased ${GeistSans.variable} ${GeistMono.variable}`}
       >
         <Toaster />
-        <AI>
-          <Providers
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex flex-col flex-1 bg-muted/50 dark:bg-background">
-                {children}
-              </main>
-            </div>
-          </Providers>
-        </AI>
+        <ActionRegistriesProvider>
+          <AI>
+            <Providers
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex flex-col flex-1 bg-muted/50 dark:bg-background">
+                  {children}
+                </main>
+              </div>
+            </Providers>
+          </AI>
+        </ActionRegistriesProvider>
         <Analytics />
       </body>
     </html>

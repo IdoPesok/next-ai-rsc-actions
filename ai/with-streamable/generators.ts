@@ -6,7 +6,7 @@ import { ActionsRegistryMetadata } from "../shared/actions-metadata";
 const { createStreamableUIAction, createStreamableUIActionsRegistry } =
   generateActionRegistryFunctions({
     namespace: "StreamableUI",
-    actionFunctionContextSchema: z.object({
+    handlerContextSchema: z.object({
       reply: z.custom<ReturnType<typeof createStreamableUI>>(),
       aiState: z.custom<ReturnType<typeof getMutableAIState>>(),
       mode: z.literal("normal").or(z.literal("superMode")).default("normal"),

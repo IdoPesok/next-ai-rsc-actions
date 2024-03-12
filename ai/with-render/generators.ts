@@ -6,7 +6,7 @@ import { ActionsRegistryMetadata } from "../shared/actions-metadata";
 const { createRenderedAction, createRenderedActionsRegistry } =
   generateActionRegistryFunctions({
     namespace: "Rendered",
-    actionFunctionContextSchema: z.object({
+    handlerContextSchema: z.object({
       aiState: z.custom<ReturnType<typeof getMutableAIState>>(),
     }),
     metadataSchema: ActionsRegistryMetadata.omit({

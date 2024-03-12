@@ -23,22 +23,17 @@ import { AI } from "@/ai";
 import { Input } from "./ui/input";
 import { cn, sleep } from "@/lib/utils";
 import { TActionRegistryMetadata } from "@/ai/shared/actions-metadata";
-import { ClientSafeActionsRegistry } from "@/ai/shared/action-types";
 import { usePathname } from "next/navigation";
+import { useActionRegistries } from "@/ai/provider";
+import { ValuesOf } from "ai-actions";
 
-export default function Chat({
-  actions,
-  type,
-}: {
-  actions: ClientSafeActionsRegistry;
-  type: "streamable" | "rendered";
-}) {
+export default function Chat({ type }: { type: "streamable" | "rendered" }) {
   const pathname = usePathname();
   const [messages, setMessages] = useUIState<typeof AI>();
   const {
-    submitUserMessageStreamable,
+    submitUserMessageWithStreamable,
     submitUserMessageSuperMode,
-    submitUserMessageRendered,
+    submitUserMessageWithRender,
   } = useActions<typeof AI>();
   const [inputValue, setInputValue] = useState("");
   const { formRef, onKeyDown } = useEnterSubmit();
@@ -46,12 +41,22 @@ export default function Chat({
   const searchRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const { actionsRegistry: actionsRegistryWithStreamable } =
+    useActionRegistries("StreamableUI");
+  const { actionsRegistry: actionsRegistryWithRender } =
+    useActionRegistries("Rendered");
+
+  const actionsRegistry =
+    type === "streamable"
+      ? actionsRegistryWithStreamable
+      : actionsRegistryWithRender;
+
   const [superMode, setSuperMode] = useState(false);
 
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [actionsSearch, setActionsSearch] = useState("");
   const [selectedActions, setSelectedActions] = useState<
-    (keyof ClientSafeActionsRegistry)[]
+    (keyof typeof actionsRegistry)[]
   >([]);
 
   useEffect(() => {
@@ -84,7 +89,7 @@ export default function Chat({
 
   const filteredActions = useMemo(
     () =>
-      Object.values(actions)
+      (Object.values(actionsRegistry) as ValuesOf<typeof actionsRegistry>[])
         .filter(
           (action) =>
             (action.metadata?.title
@@ -93,7 +98,7 @@ export default function Chat({
               action.metadata.description
                 .toLowerCase()
                 .includes(actionsSearch.toLowerCase())) &&
-            !selectedActions.includes(action.id)
+            !selectedActions.includes(action.actionId)
         )
         .slice(0, 5),
     [actionsSearch, selectedActions]
@@ -131,7 +136,7 @@ export default function Chat({
 
           if (e.key === "Enter") {
             const newAction = filteredActions[selectedIndex];
-            setSelectedActions((prev) => [...prev, newAction.id]);
+            setSelectedActions((prev) => [...prev, newAction.actionId]);
             setSelectedIndex(0);
             setActionsSearch("");
             e.preventDefault();
@@ -140,8 +145,10 @@ export default function Chat({
       ></Input>
       {filteredActions.map((action, ix) => (
         <Button
-          key={action.id}
-          onClick={() => setSelectedActions([...selectedActions, action.id])}
+          key={action.actionId}
+          onClick={() =>
+            setSelectedActions([...selectedActions, action.actionId])
+          }
           variant={"ghost"}
           className={cn(
             "py-6 px-4 flex flex-row gap-4 w-full justify-start overflow-y-hidden",
@@ -193,10 +200,12 @@ export default function Chat({
           <div
             className={cn(
               "rounded-full h-4 w-4 bg-gradient-to-r flex items-center justify-center text-white",
-              gradientMap[actions[actionId].metadata.avatarGradient]
+              gradientMap[actionsRegistry[actionId].metadata.avatarGradient]
             )}
           />
-          <div className="text-sm">{actions[actionId].metadata.title}</div>
+          <div className="text-sm">
+            {actionsRegistry[actionId].metadata.title}
+          </div>
         </div>
       ))}
     </div>
@@ -226,10 +235,10 @@ export default function Chat({
 
               let responseMessage =
                 type === "rendered"
-                  ? await submitUserMessageRendered(message, sa)
+                  ? await submitUserMessageWithRender(message, sa)
                   : superMode
                     ? await submitUserMessageSuperMode(message, sa)
-                    : await submitUserMessageStreamable(message, sa);
+                    : await submitUserMessageWithStreamable(message, sa);
 
               setMessages((currentMessages) => [
                 ...currentMessages,
@@ -272,10 +281,10 @@ export default function Chat({
 
                   let responseMessage =
                     type === "rendered"
-                      ? await submitUserMessageRendered(value, sa)
+                      ? await submitUserMessageWithRender(value, sa)
                       : superMode
                         ? await submitUserMessageSuperMode(value, sa)
-                        : await submitUserMessageStreamable(value, sa);
+                        : await submitUserMessageWithStreamable(value, sa);
 
                   setMessages((currentMessages) => [
                     ...currentMessages,
@@ -288,7 +297,7 @@ export default function Chat({
               }}
             >
               {showActionsMenu &&
-                selectedActions.length < Object.keys(actions).length &&
+                selectedActions.length < Object.keys(actionsRegistry).length &&
                 actionsMenu}
               <div className="flex flex-row gap-2 justify-between items-start pb-4">
                 {selectedActionsDisplay}

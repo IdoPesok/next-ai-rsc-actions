@@ -12,42 +12,30 @@ export const showStockPriceUIRenderedAction = createRenderedAction({
     avatarGradient: "Yellow",
   },
 })
-  .setInputSchema(
-    z
-      .object({
-        symbol: z
-          .string()
-          .describe(
-            "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
-          ),
-        price: z.number().describe("The price of the stock."),
-        numberOfShares: z
-          .number()
-          .default(100)
-          .describe(
-            "The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it."
-          ),
-      })
-      .describe(
-        "Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency."
-      )
+  .describe(
+    "Show price and the UI to purchase a stock or currency. Use this if the user wants to purchase a stock or currency."
   )
-  .setActionType("SERVER")
-  .setOutputAsVoid()
-  .setAuthType("None")
-  .setActionFunction(async ({ input, context }) => {
-    console.log("getting show stock price ui data");
-    await sleep(3000);
-    console.log("done getting show stock price ui data");
+  .input({
+    symbol: z
+      .string()
+      .describe(
+        "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
+      ),
+    price: z.number().describe("The price of the stock."),
+    numberOfShares: z
+      .number()
+      .default(100)
+      .describe(
+        "The **number of shares** for a stock or currency to purchase. Can be optional if the user did not specify it."
+      ),
   })
-  .setRenderFunction(async function* ({ actionFunction, ...rest }) {
+  .handler(() => {
+    return;
+  })
+  .render(async function* ({ ...rest }) {
     const { input, context } = rest;
     const { aiState } = context;
     const { symbol, price, numberOfShares } = input;
-
-    // we can call the action function from here
-    // this is good if you want to keep your UI and action functions separate
-    await actionFunction(rest);
 
     if (numberOfShares <= 0 || numberOfShares > 1000) {
       yield <BotMessage>Invalid amount</BotMessage>;
@@ -82,11 +70,7 @@ export const showStockPriceUIRenderedAction = createRenderedAction({
             : `How many $${symbol} would you like to purchase?`}
         </BotMessage>
         <BotCard showAvatar={false}>
-          <Purchase
-            defaultAmount={numberOfShares}
-            name={symbol}
-            price={+price}
-          />
+          <Purchase {...input} price={+price} />
         </BotCard>
       </>
     );

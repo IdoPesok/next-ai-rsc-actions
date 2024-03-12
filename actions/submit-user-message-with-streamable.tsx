@@ -8,17 +8,17 @@ import { spinner, BotMessage, SystemMessage } from "@/components/llm-stocks";
 
 import { runOpenAICompletion } from "@/lib/utils";
 import { setupFunctionCalling } from "ai-actions";
-import { TStreamableActionId } from "@/ai/streamable-ui-registry/types";
+import { TActionWithStreamableId } from "@/ai/with-streamable/types";
 import { AI } from "@/ai";
-import { StreamableActionsRegistry } from "@/ai/streamable-ui-registry";
+import { ActionsRegistryWithStreamable } from "@/ai/with-streamable";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
 });
 
-export async function submitUserMessageStreamable(
+export async function submitUserMessageWithStreamable(
   content: string,
-  actionIds?: TStreamableActionId[]
+  actionIds?: TActionWithStreamableId[]
 ) {
   "use server";
 
@@ -35,20 +35,31 @@ export async function submitUserMessageStreamable(
     <BotMessage className="items-center">{spinner}</BotMessage>
   );
 
-  const { functions, functionCallHandler } = setupFunctionCalling(
-    StreamableActionsRegistry,
-    {
+  const { functions, functionCallHandler, chooseFunction } =
+    setupFunctionCalling(ActionsRegistryWithStreamable, {
       inArray: actionIds,
       context: {
         reply,
         aiState,
       },
-    }
-  );
+    });
+
+  const dynamicInstructions = functions
+    .map(
+      (fn) =>
+        `${ActionsRegistryWithStreamable[fn.name as TActionWithStreamableId].metadata.systemMessage}`
+    )
+    .join("\n");
 
   const completion = runOpenAICompletion(openai, functionCallHandler, {
     model: "gpt-3.5-turbo",
     stream: true,
+
+    // optionally we could have chosen a function to call
+    // using the helper function `chooseFunction`
+
+    // function_call: chooseFunction("getEvents"),
+
     messages: [
       {
         role: "system",
@@ -61,7 +72,7 @@ export async function submitUserMessageStreamable(
           - "[User has changed the amount of AAPL to 10]" means that the user has changed the amount of AAPL to 10 in the UI.
 
           Instructions:
-          ${functions.map((fn) => `${StreamableActionsRegistry[fn.name as TStreamableActionId].getMetadata().systemMessage}`).join("\n")}
+          ${dynamicInstructions}
           If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
 
           Besides that, you can also chat with users and do some calculations if needed.`,
