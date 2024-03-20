@@ -1,37 +1,27 @@
-"use client";
+'use client';
 
 import {
-  ActionRegistriesProviderWrapper,
   TActionRegistriesContext,
   createUseActionRegistries,
-} from "ai-actions";
-import { createContext, useContext } from "react";
-import { ClientActionsRegistryWithStreamable } from "./with-streamable/client";
-import { ClientActionsRegistryWithRender } from "./with-render/client";
+} from 'ai-actions';
+import { createContext, useContext } from 'react';
+import { TAIActions } from './client';
 
-const Registries = [
-  ClientActionsRegistryWithStreamable,
-  ClientActionsRegistryWithRender,
-];
+// Create context
+const Context = createContext<TActionRegistriesContext>(undefined);
 
-export const ActionRegistriesContext =
-  createContext<TActionRegistriesContext>(undefined);
-
+// Create provider
 export function ActionRegistriesProvider({
+  actions,
   children,
 }: {
   children: React.ReactNode;
+  actions: TActionRegistriesContext;
 }) {
-  return (
-    <ActionRegistriesProviderWrapper
-      Context={ActionRegistriesContext}
-      actionRegistries={Registries}
-    >
-      {children}
-    </ActionRegistriesProviderWrapper>
-  );
+  return <Context.Provider value={actions}>{children}</Context.Provider>;
 }
 
-export const useActionRegistries = createUseActionRegistries(Registries, () =>
-  useContext(ActionRegistriesContext)
+// Create hook
+export const useActionRegistries = createUseActionRegistries<TAIActions>(() =>
+  useContext(Context),
 );

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useId, useState } from "react";
-import { useActions, useAIState, useUIState } from "ai/rsc";
-import { formatNumber } from "@/lib/utils";
+import { useId, useState } from 'react';
+import { useActions, useAIState, useUIState } from 'ai/rsc';
+import { formatNumber } from '@/lib/utils';
 
-import type { AI } from "../../ai";
-import { TActionInputs } from "@/ai/with-streamable/types";
+import type { AI } from '../../ai';
+import { TActionOutputs } from '@/ai/with-streamable/types';
 
 export function Purchase({
   numberOfShares: defaultAmount,
   symbol: name,
   price,
-}: TActionInputs["showStockPriceUI"]) {
+}: TActionOutputs['showStockPriceUI']) {
   const [value, setValue] = useState(defaultAmount || 100);
   const [purchasingUI, setPurchasingUI] = useState<null | React.ReactNode>(
-    null
+    null,
   );
   const [history, setHistory] = useAIState<typeof AI>();
   const [, setMessages] = useUIState<typeof AI>();
@@ -31,7 +31,7 @@ export function Purchase({
 
     // Insert a hidden history info to the list.
     const info = {
-      role: "system" as const,
+      role: 'system' as const,
       content: `[User has changed to purchase ${newValue} shares of ${name}. Total cost: $${(
         newValue * price
       ).toFixed(2)}]`,

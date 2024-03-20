@@ -1,38 +1,38 @@
-import "server-only";
+import 'server-only';
 
-import dedent from "dedent";
-import { createAI, createStreamableUI, getMutableAIState } from "ai/rsc";
-import OpenAI from "openai";
+import dedent from 'dedent';
+import { createAI, createStreamableUI, getMutableAIState } from 'ai/rsc';
+import OpenAI from 'openai';
 
-import { spinner, BotMessage, SystemMessage } from "@/components/llm-stocks";
+import { spinner, BotMessage, SystemMessage } from '@/components/llm-stocks';
 
-import { runOpenAICompletion } from "@/lib/utils";
-import { setupFunctionCalling } from "ai-actions";
-import { TActionWithStreamableId } from "@/ai/with-streamable/types";
-import { AI } from "@/ai";
-import { ActionsRegistryWithStreamable } from "@/ai/with-streamable";
+import { runOpenAICompletion } from '@/lib/utils';
+import { setupFunctionCalling } from 'ai-actions';
+import { TActionWithStreamableId } from '@/ai/with-streamable/types';
+import { AI } from '@/ai';
+import { ActionsRegistryWithStreamable } from '@/ai/with-streamable';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
+  apiKey: process.env.OPENAI_API_KEY || '',
 });
 
 export async function submitUserMessageWithStreamable(
   content: string,
-  actionIds?: TActionWithStreamableId[]
+  actionIds?: TActionWithStreamableId[],
 ) {
-  "use server";
+  'use server';
 
   const aiState = getMutableAIState<typeof AI>();
   aiState.update([
     ...aiState.get(),
     {
-      role: "user",
+      role: 'user',
       content,
     },
   ]);
 
   const reply = createStreamableUI(
-    <BotMessage className="items-center">{spinner}</BotMessage>
+    <BotMessage className="items-center">{spinner}</BotMessage>,
   );
 
   const { functions, functionCallHandler, chooseFunction } =
@@ -46,13 +46,13 @@ export async function submitUserMessageWithStreamable(
 
   const dynamicInstructions = functions
     .map(
-      (fn) =>
-        `${ActionsRegistryWithStreamable[fn.name as TActionWithStreamableId].metadata.systemMessage}`
+      fn =>
+        `${ActionsRegistryWithStreamable[fn.name as TActionWithStreamableId].metadata.systemMessage}`,
     )
-    .join("\n");
+    .join('\n');
 
   const completion = runOpenAICompletion(openai, functionCallHandler, {
-    model: "gpt-3.5-turbo",
+    model: 'gpt-3.5-turbo',
     stream: true,
 
     // optionally we could have chosen a function to call
@@ -62,7 +62,7 @@ export async function submitUserMessageWithStreamable(
 
     messages: [
       {
-        role: "system",
+        role: 'system',
         content: dedent`
           You are a stock trading conversation bot and you can help users buy stocks, step by step.
           You and the user can discuss stock prices and the user can adjust the amount of stocks they want to buy, or place an order, in the UI.
@@ -91,7 +91,7 @@ export async function submitUserMessageWithStreamable(
     reply.update(<BotMessage>{content}</BotMessage>);
     if (isFinal) {
       reply.done();
-      aiState.done([...aiState.get(), { role: "assistant", content }]);
+      aiState.done([...aiState.get(), { role: 'assistant', content }]);
     }
   });
 

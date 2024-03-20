@@ -1,34 +1,34 @@
-import { BotCard } from "@/components/llm-stocks";
-import { Stock } from "@/components/llm-stocks/stock";
-import { StockSkeleton } from "@/components/llm-stocks/stock-skeleton";
-import { sleep } from "openai/core.mjs";
-import { z } from "zod";
-import { createRenderedAction } from "../generators";
+import { BotCard } from '@/components/llm-stocks';
+import { Stock } from '@/components/llm-stocks/stock';
+import { StockSkeleton } from '@/components/llm-stocks/stock-skeleton';
+import { sleep } from 'openai/core.mjs';
+import { z } from 'zod';
+import { createRenderedAction } from '../generators';
 
 export const showStockPriceRenderedAction = createRenderedAction({
-  id: "showStockPrice",
+  id: 'showStockPrice',
   metadata: {
-    title: "Show Stock Price",
+    title: 'Show Stock Price',
     description:
-      "Get the current stock price of a given stock or currency. Use this to show the price to the user.",
-    avatarGradient: "Purple",
+      'Get the current stock price of a given stock or currency. Use this to show the price to the user.',
+    avatarGradient: 'Purple',
   },
 })
   .describe(
-    "Get the current stock price of a given stock or currency. Use this to show the price to the user."
+    'Get the current stock price of a given stock or currency. Use this to show the price to the user.',
   )
   .input({
     symbol: z
       .string()
-      .default("DOGE")
+      .default('DOGE')
       .describe(
-        "The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD."
+        'The name or symbol of the stock or currency. e.g. DOGE/AAPL/USD.',
       ),
   })
   .handler(async ({ input, context }) => {
-    console.log("running show stock price");
+    console.log('running show stock price');
     await sleep(3000);
-    console.log("finished running show stock price");
+    console.log('finished running show stock price');
 
     return {
       price: Math.round(Math.random() * 200 + 50),
@@ -54,8 +54,8 @@ export const showStockPriceRenderedAction = createRenderedAction({
     aiState.done([
       ...aiState.get(),
       {
-        role: "function",
-        name: "showStockPrice",
+        role: 'function',
+        name: 'showStockPrice',
         content: `[Price of ${symbol} = ${price}]`,
       },
     ]);

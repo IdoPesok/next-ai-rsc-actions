@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { Lightbulb, WrenchIcon } from "lucide-react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { Lightbulb, WrenchIcon } from 'lucide-react';
 
-import { useUIState, useActions } from "ai/rsc";
-import { UserMessage } from "@/components/llm-stocks/message";
+import { useUIState, useActions } from 'ai/rsc';
+import { UserMessage } from '@/components/llm-stocks/message';
 
-import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
-import { FooterText } from "@/components/footer";
-import Textarea from "react-textarea-autosize";
-import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
+import { ChatScrollAnchor } from '@/lib/hooks/chat-scroll-anchor';
+import { FooterText } from '@/components/footer';
+import Textarea from 'react-textarea-autosize';
+import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { IconArrowElbow, IconPlus } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
-import { ChatList } from "@/components/chat-list";
-import { EmptyScreen } from "@/components/empty-screen";
-import { AI } from "@/ai";
-import { Input } from "./ui/input";
-import { cn, sleep } from "@/lib/utils";
-import { TActionRegistryMetadata } from "@/ai/shared/actions-metadata";
-import { usePathname } from "next/navigation";
-import { useActionRegistries } from "@/ai/provider";
-import { ValuesOf } from "ai-actions";
+} from '@/components/ui/tooltip';
+import { IconArrowElbow, IconPlus } from '@/components/ui/icons';
+import { Button } from '@/components/ui/button';
+import { ChatList } from '@/components/chat-list';
+import { EmptyScreen } from '@/components/empty-screen';
+import { AI } from '@/ai';
+import { Input } from './ui/input';
+import { cn, sleep } from '@/lib/utils';
+import { TActionRegistryMetadata } from '@/ai/shared/actions-metadata';
+import { usePathname } from 'next/navigation';
+import { useActionRegistries } from '@/ai/provider';
+import { ValuesOf } from 'ai-actions';
 
-export default function Chat({ type }: { type: "streamable" | "rendered" }) {
+export default function Chat({ type }: { type: 'streamable' | 'rendered' }) {
   const pathname = usePathname();
   const [messages, setMessages] = useUIState<typeof AI>();
   const {
@@ -35,26 +35,24 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
     submitUserMessageSuperMode,
     submitUserMessageWithRender,
   } = useActions<typeof AI>();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { actionsRegistry: actionsRegistryWithStreamable } =
-    useActionRegistries("StreamableUI");
-  const { actionsRegistry: actionsRegistryWithRender } =
-    useActionRegistries("Rendered");
+  const { StreamableUIActionsRegistry, RenderedActionsRegistry } =
+    useActionRegistries();
 
   const actionsRegistry =
-    type === "streamable"
-      ? actionsRegistryWithStreamable
-      : actionsRegistryWithRender;
+    type === 'streamable'
+      ? StreamableUIActionsRegistry
+      : RenderedActionsRegistry;
 
   const [superMode, setSuperMode] = useState(false);
 
   const [showActionsMenu, setShowActionsMenu] = useState(false);
-  const [actionsSearch, setActionsSearch] = useState("");
+  const [actionsSearch, setActionsSearch] = useState('');
   const [selectedActions, setSelectedActions] = useState<
     (keyof typeof actionsRegistry)[]
   >([]);
@@ -65,10 +63,10 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "/") {
+      if (e.key === '/') {
         if (
           e.target &&
-          ["INPUT", "TEXTAREA"].includes((e.target as any).nodeName)
+          ['INPUT', 'TEXTAREA'].includes((e.target as any).nodeName)
         ) {
           return;
         }
@@ -80,10 +78,10 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [inputRef]);
 
@@ -91,54 +89,54 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
     () =>
       (Object.values(actionsRegistry) as ValuesOf<typeof actionsRegistry>[])
         .filter(
-          (action) =>
+          action =>
             (action.metadata?.title
               .toLowerCase()
               .includes(actionsSearch.toLowerCase()) ||
               action.metadata.description
                 .toLowerCase()
                 .includes(actionsSearch.toLowerCase())) &&
-            !selectedActions.includes(action.actionId)
+            !selectedActions.includes(action.actionId),
         )
         .slice(0, 5),
-    [actionsSearch, selectedActions]
+    [actionsSearch, selectedActions],
   );
 
   const gradientMap = {
-    Blue: "from-blue-500 to-blue-600",
-    Green: "from-green-500 to-green-600",
-    Red: "from-red-500 to-red-600",
-    Orange: "from-orange-500 to-orange-600",
-    Purple: "from-purple-500 to-purple-600",
-    Pink: "from-pink-500 to-pink-600",
-    Yellow: "from-yellow-500 to-yellow-600",
+    Blue: 'from-blue-500 to-blue-600',
+    Green: 'from-green-500 to-green-600',
+    Red: 'from-red-500 to-red-600',
+    Orange: 'from-orange-500 to-orange-600',
+    Purple: 'from-purple-500 to-purple-600',
+    Pink: 'from-pink-500 to-pink-600',
+    Yellow: 'from-yellow-500 to-yellow-600',
   } as const satisfies {
-    [K in TActionRegistryMetadata["avatarGradient"]]: string;
+    [K in TActionRegistryMetadata['avatarGradient']]: string;
   };
 
   const actionsMenu = (
     <div className="flex flex-col gap-1 pb-4">
       <Input
         value={actionsSearch}
-        onChange={(e) => setActionsSearch(e.target.value)}
+        onChange={e => setActionsSearch(e.target.value)}
         placeholder="Search for an action..."
         ref={searchRef}
         className="mb-3"
-        onKeyDown={(e) => {
-          if (e.key === "ArrowUp") {
-            setSelectedIndex((prev) => (prev - 1) % filteredActions.length);
-          } else if (e.key === "ArrowDown") {
+        onKeyDown={e => {
+          if (e.key === 'ArrowUp') {
+            setSelectedIndex(prev => (prev - 1) % filteredActions.length);
+          } else if (e.key === 'ArrowDown') {
             setSelectedIndex(
-              (prev) =>
-                (prev + filteredActions.length + 1) % filteredActions.length
+              prev =>
+                (prev + filteredActions.length + 1) % filteredActions.length,
             );
           }
 
-          if (e.key === "Enter") {
+          if (e.key === 'Enter') {
             const newAction = filteredActions[selectedIndex];
-            setSelectedActions((prev) => [...prev, newAction.actionId]);
+            setSelectedActions(prev => [...prev, newAction.actionId]);
             setSelectedIndex(0);
-            setActionsSearch("");
+            setActionsSearch('');
             e.preventDefault();
           }
         }}
@@ -149,16 +147,16 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
           onClick={() =>
             setSelectedActions([...selectedActions, action.actionId])
           }
-          variant={"ghost"}
+          variant={'ghost'}
           className={cn(
-            "py-6 px-4 flex flex-row gap-4 w-full justify-start overflow-y-hidden",
-            selectedIndex === ix && "bg-muted"
+            'py-6 px-4 flex flex-row gap-4 w-full justify-start overflow-y-hidden',
+            selectedIndex === ix && 'bg-muted',
           )}
         >
           <div
             className={cn(
-              "rounded-full h-8 w-8 bg-gradient-to-r flex items-center justify-center text-white",
-              gradientMap[action.metadata.avatarGradient]
+              'rounded-full h-8 w-8 bg-gradient-to-r flex items-center justify-center text-white',
+              gradientMap[action.metadata.avatarGradient],
             )}
           >
             <WrenchIcon className="h-4 w-4" />
@@ -173,7 +171,7 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
   );
 
   const handleAtKeyDown = async () => {
-    setActionsSearch("");
+    setActionsSearch('');
     setSelectedIndex(0);
     setShowActionsMenu(true);
 
@@ -186,21 +184,21 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
       {selectedActions.length > 0
         ? `Talking to:`
         : `Use @ to select actions (all are on by default)`}
-      {selectedActions.map((actionId) => (
+      {selectedActions.map(actionId => (
         <div
           key={actionId}
           className={cn(
-            "bg-muted text-muted-foreground rounded py-0.5 px-2 flex gap-2 items-center flex-row",
-            "hover:bg-foreground hover:text-background transition-colors duration-200 ease-in-out cursor-pointer"
+            'bg-muted text-muted-foreground rounded py-0.5 px-2 flex gap-2 items-center flex-row',
+            'hover:bg-foreground hover:text-background transition-colors duration-200 ease-in-out cursor-pointer',
           )}
           onClick={() =>
-            setSelectedActions((prev) => prev.filter((id) => id !== actionId))
+            setSelectedActions(prev => prev.filter(id => id !== actionId))
           }
         >
           <div
             className={cn(
-              "rounded-full h-4 w-4 bg-gradient-to-r flex items-center justify-center text-white",
-              gradientMap[actionsRegistry[actionId].metadata.avatarGradient]
+              'rounded-full h-4 w-4 bg-gradient-to-r flex items-center justify-center text-white',
+              gradientMap[actionsRegistry[actionId].metadata.avatarGradient],
             )}
           />
           <div className="text-sm">
@@ -220,9 +218,9 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
           </>
         ) : (
           <EmptyScreen
-            submitMessage={async (message) => {
+            submitMessage={async message => {
               // Add user message UI
-              setMessages((currentMessages) => [
+              setMessages(currentMessages => [
                 ...currentMessages,
                 {
                   id: Date.now(),
@@ -234,13 +232,13 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                 selectedActions.length > 0 ? selectedActions : undefined;
 
               let responseMessage =
-                type === "rendered"
+                type === 'rendered'
                   ? await submitUserMessageWithRender(message, sa)
                   : superMode
                     ? await submitUserMessageSuperMode(message, sa)
                     : await submitUserMessageWithStreamable(message, sa);
 
-              setMessages((currentMessages) => [
+              setMessages(currentMessages => [
                 ...currentMessages,
                 responseMessage,
               ]);
@@ -259,15 +257,15 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
 
                 // Blur focus on mobile
                 if (window.innerWidth < 600) {
-                  e.target["message"]?.blur();
+                  e.target['message']?.blur();
                 }
 
                 const value = inputValue.trim();
-                setInputValue("");
+                setInputValue('');
                 if (!value) return;
 
                 // Add user message UI
-                setMessages((currentMessages) => [
+                setMessages(currentMessages => [
                   ...currentMessages,
                   {
                     id: Date.now(),
@@ -280,13 +278,13 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                     selectedActions.length > 0 ? selectedActions : undefined;
 
                   let responseMessage =
-                    type === "rendered"
+                    type === 'rendered'
                       ? await submitUserMessageWithRender(value, sa)
                       : superMode
                         ? await submitUserMessageSuperMode(value, sa)
                         : await submitUserMessageWithStreamable(value, sa);
 
-                  setMessages((currentMessages) => [
+                  setMessages(currentMessages => [
                     ...currentMessages,
                     responseMessage,
                   ]);
@@ -301,13 +299,13 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                 actionsMenu}
               <div className="flex flex-row gap-2 justify-between items-start pb-4">
                 {selectedActionsDisplay}
-                {type === "streamable" && (
+                {type === 'streamable' && (
                   // for now, only show super mode when using streamable registry
                   <div className="flex flex-row gap-2 items-center">
                     <input
                       type="checkbox"
                       checked={superMode}
-                      onChange={(e) => setSuperMode(e.target.checked)}
+                      onChange={e => setSuperMode(e.target.checked)}
                       id="superMode"
                     />
                     <label
@@ -326,7 +324,7 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                       variant="outline"
                       size="icon"
                       className="absolute left-0 w-8 h-8 p-0 rounded-full top-4 bg-background sm:left-4"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.preventDefault();
                         window.location.reload();
                       }}
@@ -340,8 +338,8 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                 <Textarea
                   ref={inputRef}
                   tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "@") {
+                  onKeyDown={e => {
+                    if (e.key === '@') {
                       handleAtKeyDown();
                       e.preventDefault();
                     }
@@ -352,14 +350,14 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                   autoFocus
                   spellCheck={false}
                   autoComplete="off"
-                  onFocus={(e) => {
+                  onFocus={e => {
                     setShowActionsMenu(false);
                   }}
                   autoCorrect="off"
                   name="message"
                   rows={1}
                   value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={e => setInputValue(e.target.value)}
                 />
                 <div className="absolute right-0 top-4 sm:right-4">
                   <Tooltip>
@@ -367,7 +365,7 @@ export default function Chat({ type }: { type: "streamable" | "rendered" }) {
                       <Button
                         type="submit"
                         size="icon"
-                        disabled={inputValue === ""}
+                        disabled={inputValue === ''}
                       >
                         <IconArrowElbow />
                         <span className="sr-only">Send message</span>
